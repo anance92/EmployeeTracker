@@ -1,3 +1,9 @@
+// QUESTIONS FOR OH SATURDAY W/ ALEX
+// 1. Why are my prompt choices repeating?
+// 2. Why are my console.tables coming back as undefined?
+// 3. What does const { allowedNodeEnvironmentFlags } = require("process"); mean?
+
+
 const inquirer = require("inquirer");
 const mysql = require('mysql2');
 const { allowedNodeEnvironmentFlags } = require("process");
@@ -28,7 +34,7 @@ function mainMenu() {
         }
     ])
     .then(response => {
-        console.log(response)
+        // console.log(response)
         switch (response.main) {
             case "View All Departments":
                 viewAllDepartments();
@@ -65,7 +71,11 @@ function viewAllDepartments() {
 }
 
 function viewAllEmployees() {
-
+    connection.query("SELECT * FROM employees", 
+    (error, results) => {
+        console.table(results);
+        mainMenu();
+    })
 }
 
 function viewAllRoles() {
