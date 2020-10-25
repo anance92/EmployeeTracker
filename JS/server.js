@@ -75,7 +75,7 @@ function viewAllEmployees() {
     (error, results) => {
         console.table(results);
         mainMenu();
-    })
+    });
 }
 
 function viewAllRoles() {
