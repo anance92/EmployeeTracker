@@ -15,12 +15,12 @@ const connection = mysql.createConnection({
   user: 'root',
   // Your MySQL password
   password: 'goASAbetanu9*',
-  database: 'ice_creamDB'
+  database: 'employee_trackerDB'
 });
 
 connection.connect(err => {
   if (err) throw err;
-  console.log('connected as id ' + connection.threadId + '\n');
+  // console.log('connected as id ' + connection.threadId + '\n');
   mainMenu();
 });
 
@@ -92,21 +92,152 @@ function viewAllRoles() {
     });
 }
 
+// THEN I am prompted to enter the name of the department and that department is added to the database
 function addDepartment() {
-
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter Department Name",
+            name: "title"
+        }
+    ])
+        .then(response => {
+            connection.query("INSERT INTO departments SET ?",
+                [response], (error, results) => {
+                    console.log(results);
+                    mainMenu();
+                })
+        })
 }
 
+// THEN I am prompted to enter the employee’s first name, last name, role, and manager and that employee is added to the database
 function addEmployee() {
-
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter Employee's First Name",
+            name: "firstName"
+        },
+        {
+            type: "input",
+            message: "Enter Employee's Last Name",
+            name: "lastName"
+        },
+        {
+            type: "input",
+            message: "Enter Employee's Role",
+            name: "jobTitle"
+        },
+        {
+            type: "input",
+            message: "Enter Employee's Manager",
+            name: "manager"
+        }
+    ])
+        .then(response => {
+            connection.query("INSERT INTO employees SET ?",
+                [response], (error, results) => {
+                    // console.log(results);
+                    mainMenu();
+                })
+        })
 }
 
+// THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
 function addRole() {
+    inquirer.prompt([
+        {
+            type: "input",
+            message: "Enter Role Name",
+            name: "jobTitle"
+        },
+        {
+            type: "input",
+            message: "Enter Salary",
+            name: "salary"
+        },
+        {
+            type: "input",
+            message: "Enter Department",
+            name: "department"
+        }
+    ])
+        .then(response => {
+            connection.query("INSERT INTO roles SET ?",
+                [response], (error, results) => {
+                    // console.log(results);
+                    mainMenu();
+                })
+        })
 
 }
 
+// THEN I am prompted to select an employee to update and their new role and this information is updated in the database 
 function updateEmployeeRole() {
-
+    connection.query("SELECT * FROM employees", (error, results) => {
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "updateMe",
+                message: "Who do you want to update?",
+                choices: results.map(employees => `${employees.id}:${employees.firstName}`)
+            },
+            {
+                type: "list",
+                name: "jobTitle",
+                message: "To what role?",
+                choices: results.map(roles => `${roles.id}:${roles.jobTitle}`)
+            }
+        ])
+            .then(response => {
+                console.log(response);
+                let role = response.jobTitle.split(":")[1];
+                let id = response.updateMe.split(":")[0];
+                console.log(id);
+                connection.query("UPDATE FROM employees SET ? WHERE ?", [
+                    { role },
+                    { id }
+                ], (error, results) => {
+                    console.log(results);
+                    
+                    mainMenu();
+                })
+            })
+    })
 }
+function updateEmployeeRole() {
+    connection.query("SELECT * FROM employees", (error, results) => {
+        inquirer.prompt([
+            {
+                type: "list",
+                name: "updateMe",
+                message: "Who do you want to update?",
+                choices: results.map(employees => `${employees.id}:${employees.firstName} ${employees.lastName}`)
+            },
+            {
+                type: "list",
+                name: "newRole",
+                message: "Change their role to:",
+                choices: results.map(roles => `${roles.jobTitle}`)
+            }
+        ])
+        .then(response => {
+            console.log(response);
+            let role = response.newRole;
+            let id = response.updateMe.split(":")[0];
+            console.log(id);
+            connection.query("UPDATE FROM employees SET ? WHERE ?", [
+                { role },
+                { id }
+            ], (error, results) => {
+                console.log(results);
+                mainMenu();
+            })
+        })
+    })
+}
+
+
 
 function exit() {
     connection.end();
