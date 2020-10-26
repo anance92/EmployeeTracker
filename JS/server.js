@@ -104,7 +104,7 @@ function addDepartment() {
         .then(response => {
             connection.query("INSERT INTO departments SET ?",
                 [response], (error, results) => {
-                    console.log(results);
+                    // console.log(results);
                     mainMenu();
                 })
         })
@@ -190,16 +190,15 @@ function updateEmployeeRole() {
             }
         ])
             .then(response => {
-                console.log(response);
+                // console.log(response);
                 let role = response.jobTitle.split(":")[1];
                 let id = response.updateMe.split(":")[0];
-                console.log(id);
+                // console.log(id);
                 connection.query("UPDATE FROM employees SET ? WHERE ?", [
                     { role },
                     { id }
                 ], (error, results) => {
-                    console.log(results);
-                    
+                    // console.log(results);
                     mainMenu();
                 })
             })
